@@ -25,7 +25,7 @@ main()
 })
 
 async function main(){
-   await  mongoose.connect('mongodb://127.0.0.1:27017/sudokosolver');
+   await  mongoose.connect('mongodb+srv://saigannu08:Sony24%40@cluster3.dlpz51e.mongodb.net/');
 }
 
 //signup page backend
@@ -148,10 +148,10 @@ app.post("/auth/changepassword",async(req,res)=>{
 })
 
 // to get sudoko
-app.get("/newsudoko",(req,res)=>{
+app.get("/newsudoko",async(req,res)=>{
   try{
-  let puzzle = createPuzzle();
-  return res.status(300).send({game:puzzle});
+  let puzzle = await createPuzzle();
+  return res.status(200).send({game:puzzle});
   }catch(err){
     return res.send("Internal error");
   }
