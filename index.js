@@ -16,6 +16,8 @@ const {
 } =require("./Sudoko");
 // middleware
 app.use(express.json());
+var cors = require('cors');
+app.use(cors());
 main()
 .then(()=>{
     console.log("connection successful");
