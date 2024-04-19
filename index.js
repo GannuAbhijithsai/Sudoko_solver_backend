@@ -146,7 +146,19 @@ app.post("/auth/changepassword",async(req,res)=>{
   return res.status(500).json({error:'Internal server error'});
 }
 })
-
+//get all users
+app.get("/users",async(req,res)=>{
+  try {
+  
+    const users = await signupdetails.find();
+   
+    const usersJSON = JSON.stringify(users);
+ 
+    res.send(users);
+} catch (error) {
+    res.status(500).json({ message: 'Error fetching users', error: error.message });
+}
+})
 // to get sudoko
 app.get("/newsudoko",async(req,res)=>{
   try{
