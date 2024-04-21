@@ -19,7 +19,12 @@ const signupSchema=new Schema({
     password:{
         type:String,
         required:true,
-    }
+    },
+    puzzles:[{board:[[Number]]}],
+    solvedBoards: [{
+        board: [[Number]], // Sudoku board (2D array of numbers)
+        timeTaken: String, // Time taken to solve the puzzle (formatted as HH:MM:SS)
+      }],
    
 });
 
