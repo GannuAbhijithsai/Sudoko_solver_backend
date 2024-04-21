@@ -6,6 +6,7 @@ const mongoose=require("mongoose");
 const nodemailer = require('nodemailer');
 const app = express();
 const otpdetails=require("./models/Otp");
+
 const {
   
   solve,
@@ -16,8 +17,6 @@ const {
 } =require("./Sudoko");
 // middleware
 app.use(express.json());
-var cors = require('cors');
-app.use(cors());
 main()
 .then(()=>{
     console.log("connection successful");
@@ -170,7 +169,7 @@ app.get("/newsudoko",async(req,res)=>{
     return res.send("Internal error");
   }
 })
-
+//solve sudoko
 app.post("/solvesudoko",(req,res)=>{
   try{
   let  puzzle=[];
@@ -182,6 +181,54 @@ app.post("/solvesudoko",(req,res)=>{
     return res.status(300).send(err);
   }
 })
+//save to do later
+app.post("/:username/todo",async(req,res)=>{
+  try{
+  const username=req.params.username;
+  let puzzle=[];
+  copyGrid(req.body.game,puzzle);
+  console.log(puzzle);
+  let userBoard = await signupdetails.findOne({ username });
+  if (!userBoard) {
+    userBoard = new signupdetails({ username, puzzles: [] });
+  }
+  userBoard.puzzles.push({ board: puzzle });
+
+  // Save the updated user board record
+  await userBoard.save();
+  res.status(200).json({ message: 'Sudoku board saved successfully.' });
+} catch (error) {
+  console.error(error);
+  res.status(500).json({ error: 'Internal server error.' });
+}
+})
+
+// solved puzzles
+app.post('/sudoku/:username/solved', async (req, res) => {
+  try {
+    const { username } = req.params;
+    const timeTaken  = req.body.timeTaken; // Assuming board is a 2D array and timeTaken is formatted as HH:MM:SS
+    let puzzle=[];
+    copyGrid(req.body.game,puzzle);
+    // Find the user's Sudoku board record or create a new one if not exists
+    let userBoard = await signupdetails.findOne({ username:username });
+
+    if (!userBoard) {
+      userBoard = new signupdetails({ username, solvedBoards: [] });
+    }
+console.log(puzzle);
+    // Push the solved board with time taken into the user's solvedBoards array
+    userBoard.solvedBoards.push( {board:puzzle,timeTaken:timeTaken} );
+
+    // Save the updated user board record
+    await userBoard.save();
+
+    res.status(200).json({ message: 'Sudoku board with time taken saved successfully.' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error.' });
+  }
+});
 
 const port = 3000
 app.listen(port, () => {
