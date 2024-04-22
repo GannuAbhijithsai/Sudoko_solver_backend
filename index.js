@@ -237,6 +237,20 @@ console.log(puzzle);
     res.status(500).json({ error: 'Internal server error.' });
   }
 });
+//get a specific user
+app.get('/:username/details',async(req,res)=>{
+ 
+  try{
+    const {username}=req.params;
+    const user1=await signupdetails.findOne({username:username});
+   
+
+    res.send(user1);
+  }catch(err){
+    res.status(500).send("unable to fetch the user")
+  }
+})
+
 
 const port = 3000
 app.listen(port, () => {
